@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Lab7</title>
+	<style type="text/css">
+		body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .input-container {
+            margin-bottom: 20px;
+        }
+        input {
+            padding: 5px;
+            margin-right: 10px;
+        }
+        button {
+            padding: 5px 15px;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            cursor: pointer;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f5f5f5;
+        }
+        .average-row {
+            font-weight: bold;
+        }
+	</style>
+</head>
+<body>
+	<h1>Lab 7</h1>
+    
+    <div class="input-container">
+        <input type="number" id="mathInput" placeholder="Math">
+        <input type="number" id="englishInput" placeholder="English">
+        <button onclick="submitGrades()">Submit</button>
+    </div>
+
+    <table id="gradesTable">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Math</th>
+                <th>English</th>
+                <th>Average</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="average-row">
+                <td>Average</td>
+                <td>0.00</td>
+                <td>0.00</td>
+                <td>0.00</td>
+            </tr>
+        </tbody>
+    </table>
+
+	<script>
+        function submitGrades() {
+            const mathInput = document.getElementById('mathInput');
+            const englishInput = document.getElementById('englishInput');
+            
+            const math = parseFloat(mathInput.value);
+            const english = parseFloat(englishInput.value);
+            
+            if (isNaN(math) || isNaN(english)) {
+                alert('Please enter valid numbers for both subjects');
+                return;
+            }
+
+            const average = ((math + english) / 2).toFixed(2);
+            
+            const table = document.getElementById('gradesTable');
+            const tbody = table.getElementsByTagName('tbody')[0];
+            
+            // Remove average row
+            tbody.deleteRow(-1);
+            
+            // Add new grade row
+            const newRow = tbody.insertRow(-1);
+            newRow.innerHTML = `
+                <td>${tbody.rows.length}</td>
+                <td>${math}</td>
+                <td>${english}</td>
+                <td>${average}</td>
+            `;
+            
+            // Calculate and add new average row
+            const mathAvg = calculateColumnAverage(tbody, 1);
+            const engAvg = calculateColumnAverage(tbody, 2);
+            const totalAvg = calculateColumnAverage(tbody, 3);
+            
+            const avgRow = tbody.insertRow(-1);
+            avgRow.className = 'average-row';
+            avgRow.innerHTML = `
+                <td>Average</td>
+                <td>${mathAvg}</td>
+                <td>${engAvg}</td>
+                <td>${totalAvg}</td>`;
+            
+            // Clear inputs
+            mathInput.value = '';
+            englishInput.value = '';
+        }
+
+        function calculateColumnAverage(tbody, colIndex) {
+            let sum = 0;
+            let count = 0;
+            
+            for (let i = 0; i < tbody.rows.length; i++) {
+                const value = parseFloat(tbody.rows[i].cells[colIndex].textContent);
+                if (!isNaN(value)) {
+                    sum += value;
+                    count++;
+                }
+            }
+            
+            return (sum / count).toFixed(2);
+        }
+    </script>
+</body>
+</html>
